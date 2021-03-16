@@ -15,3 +15,279 @@ WebGLContext::LoseOldestWebGLContextIfLimitExceeded()
     MOZ_ASSERT(kMaxWebGLContextsPerPrincipal < kMaxWebGLContexts);
 
     if (!NS_IsMainThread()) {
+#LOCALIZATION NOTE (notification.softblocked) %1$S is the add-on name
+notification.softblocked=%1$S is known to cause issues.
+notification.softblocked.link=More Information
+#LOCALIZATION NOTE (notification.compatibility) %1$S is the add-on name, %2$S is brand name
+notification.compatibility=%1$S was not designed for %2$S. It may not function properly or cease to function.
+notification.compatibility.link=More Information
+#LOCALIZATION NOTE (notification.outdated) %1$S is the add-on name
+notification.outdated=An important update is available for %1$S.
+notification.outdated.link=Update Now
+@@ -81,9 +78,6 @@ details.notification.incompatible=%1$S is incompatible with %2$S %3$S.
+#LOCALIZATION NOTE (details.notification.blocked) %1$S is the add-on name
+details.notification.blocked=%1$S has been disabled due to security or stability issues.
+details.notification.blocked.link=More Information
+#LOCALIZATION NOTE (details.notification.compatibility) %1$S is the add-on name, %2$S is brand name
+details.notification.compatibility=%1$S was not designed for %2$S. It may not function properly or cease to function.
+details.notification.compatibility.link=More Information
+#LOCALIZATION NOTE (details.notification.softblocked) %1$S is the add-on name
+details.notification.softblocked=%1$S is known to cause issues.
+details.notification.softblocked.link=More Information
+
+
++ 0
+- 13
+toolkit/mozapps/extensions/content/extensions.js
+View File
+@@ -3047,19 +3047,6 @@ var gDetailView = {
+        warning.textContent =
+          gStrings.ext.formatStringFromName("details.notification.gmpPending",
+                                            [this._addon.name], 1);
+#ifdef MOZ_PHOENIX_EXTENSIONS
+      } else if (this._addon.native == false) {
+        this.node.setAttribute("notification", "warning");
+        this.node.setAttribute("native", "false");
+        document.getElementById("detail-warning").textContent = gStrings.ext.formatStringFromName(
+          "details.notification.compatibility",
+          [this._addon.name, gStrings.brandShortName], 2
+        );
+        var warningLink = document.getElementById("detail-warning-link");
+        warningLink.value = gStrings.ext.GetStringFromName("details.notification.compatibility.link");
+        warningLink.href = Services.urlFormatter.formatURLPref("extensions.compatibility.url");
+        warningLink.hidden = false;
+#endif
+      } else {
+        this.node.removeAttribute("notification");
+      }
+
+
+
+toolkit/mozapps/extensions/content/extensions.xml                            [this.mAddon.name], 1);
+            } else {
+              this.removeAttribute("notification");
+#ifdef MOZ_PHOENIX_EXTENSIONS
+              if (this.mAddon.type == "extension") {
+                this.setAttribute("native", this.mAddon.native);
+                if (this.mAddon.native == false) {
+                  this.setAttribute("notification", "warning");
+                  this._warning.textContent = gStrings.ext.formatStringFromName(
+                    "notification.compatibility",
+                    [this.mAddon.name, gStrings.brandShortName], 2
+                  );
+                  this._warningLink.value = gStrings.ext.GetStringFromName("notification.compatibility.link");
+                  this._warningLink.href = Services.urlFormatter.formatURLPref("extensions.compatibility.url");
+                  this._warningLink.hidden = false;
+                  this._warningBtn.hidden = true;
+                }
+              }
+#endif
+            }
+          }
+
+
+
++ 0
+- 8
+toolkit/mozapps/extensions/internal/AddonRepository.jsm
+View File
+@@ -64,9 +64,6 @@ const BLANK_DB = function() {
+}
+
+const TOOLKIT_ID     = "toolkit@mozilla.org";
+#ifdef MOZ_PHOENIX_EXTENSIONS
+const FIREFOX_ID        = "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}";
+#endif
+Cu.import("resource://gre/modules/Log.jsm");
+const LOGGER_ID = "addons.repository";
+
+@@ -1254,12 +1251,7 @@ this.AddonRepository = {
+    let results = [];
+
+    function isSameApplication(aAppNode) {
+#ifdef MOZ_PHOENIX_EXTENSIONS
+      if (self._getTextContent(aAppNode) == Services.appinfo.ID ||
+          self._getTextContent(aAppNode) == FIREFOX_ID) {
+#else
+      if (self._getTextContent(aAppNode) == Services.appinfo.ID) {
+#endif
+        return true;
+      }
+      return false;
+
+
++ 0
+- 28
+toolkit/mozapps/extensions/internal/AddonUpdateChecker.jsm
+View File
+@@ -25,7 +25,6 @@ const XMLURI_PARSE_ERROR              = "http://www.mozilla.org/newlayout/xml/pa
+
+const TOOLKIT_ID                      = "toolkit@mozilla.org";
+const FIREFOX_ID                      = "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}";
+const FIREFOX_APPCOMPATVERSION        = "56.9"
+
+const PREF_UPDATE_REQUIREBUILTINCERTS = "extensions.update.requireBuiltInCerts";
+const PREF_EM_MIN_COMPAT_APP_VERSION  = "extensions.minCompatibleAppVersion";
+@@ -523,18 +522,6 @@ function parseJSONManifest(aId, aUpdateKey, aRequest, aManifestData) {
+        maxVersion: getRequiredProperty(app, "max_version", "string"),
+      }
+    }
+#ifdef MOZ_PHOENIX_EXTENSIONS
+    else if (FIREFOX_ID in applications) {
+      logger.debug("update.json: Dual-GUID targetApplication");
+      app = getProperty(applications, FIREFOX_ID, "object");
+
+      appEntry = {
+        id: FIREFOX_ID,
+        minVersion: getRequiredProperty(app, "min_version", "string"),
+        maxVersion: getRequiredProperty(app, "max_version", "string"),
+      }
+    }
+#endif
+    else if (TOOLKIT_ID in applications) {
+      logger.debug("update.json: Toolkit targetApplication");
+      app = getProperty(applications, TOOLKIT_ID, "object");
+@@ -558,11 +545,7 @@ function parseJSONManifest(aId, aUpdateKey, aRequest, aManifestData) {
+        id: TOOLKIT_ID,
+        minVersion: platformVersion,
+#endif
+#if defined(MOZ_PHOENIX) && defined(MOZ_PHOENIX_EXTENSIONS)
+        maxVersion: FIREFOX_APPCOMPATVERSION,
+#else
+        maxVersion: '*',
+#endif
+      };
+    }
+    else {
+@@ -825,12 +808,6 @@ function matchesVersions(aUpdate, aAppVersion, aPlatformVersion,
+      return (Services.vc.compare(aAppVersion, app.minVersion) >= 0) &&
+             (aIgnoreMaxVersion || (Services.vc.compare(aAppVersion, app.maxVersion) <= 0));
+    }
+#ifdef MOZ_PHOENIX_EXTENSIONS
+    if (app.id == FIREFOX_ID) {
+      return (Services.vc.compare(aAppVersion, app.minVersion) >= 0) &&
+             (aIgnoreMaxVersion || (Services.vc.compare(aAppVersion, app.maxVersion) <= 0));
+    }
+#endif
+    if (app.id == TOOLKIT_ID) {
+      result = (Services.vc.compare(aPlatformVersion, app.minVersion) >= 0) &&
+               (aIgnoreMaxVersion || (Services.vc.compare(aPlatformVersion, app.maxVersion) <= 0));
+@@ -888,12 +865,7 @@ this.AddonUpdateChecker = {
+        if (aIgnoreCompatibility) {
+          for (let targetApp of update.targetApplications) {
+            let id = targetApp.id;
+#ifdef MOZ_PHOENIX_EXTENSIONS
+            if (id == Services.appinfo.ID || id == FIREFOX_ID ||
+                id == TOOLKIT_ID)
+#else
+            if (id == Services.appinfo.ID || id == TOOLKIT_ID)
+#endif
+              return update;
+          }
+        }
+
+
++ 0
+- 36
+toolkit/mozapps/extensions/internal/XPIProvider.jsm
+View File
+@@ -134,10 +134,6 @@ const RDFURI_INSTALL_MANIFEST_ROOT    = "urn:mozilla:install-manifest";
+const PREFIX_NS_EM                    = "http://www.mozilla.org/2004/em-rdf#";
+
+const TOOLKIT_ID                      = "toolkit@mozilla.org";
+#ifdef MOZ_PHOENIX_EXTENSIONS
+const FIREFOX_ID                      = "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+const FIREFOX_APPCOMPATVERSION        = "56.9"
+#endif
+
+// The value for this is in Makefile.in
+#expand const DB_SCHEMA                       = __MOZ_EXTENSIONS_DB_SCHEMA__;
+@@ -6454,27 +6450,11 @@ AddonInternal.prototype = {
+    if (!aPlatformVersion)
+      aPlatformVersion = Services.appinfo.platformVersion;
+
+#ifdef MOZ_PHOENIX_EXTENSIONS
+    this.native = false;
+#endif
+
+    let version;
+    if (app.id == Services.appinfo.ID) {
+      version = aAppVersion;
+#ifdef MOZ_PHOENIX_EXTENSIONS
+      this.native = true;
+    }
+    else if (app.id == FIREFOX_ID) {
+     version = FIREFOX_APPCOMPATVERSION;
+      if (this.type != "extension")
+        //Only allow extensions in Firefox compatibility mode
+        return false;
+#endif
+    }
+    else if (app.id == TOOLKIT_ID) {
+#ifdef MOZ_PHOENIX_EXTENSIONS
+      this.native = true;
+#endif
+      version = aPlatformVersion;
+    }
+
+@@ -6497,11 +6477,7 @@ AddonInternal.prototype = {
+
+      // Extremely old extensions should not be compatible by default.
+      let minCompatVersion;
+#ifdef MOZ_PHOENIX_EXTENSIONS
+      if (app.id == Services.appinfo.ID || app.id == FIREFOX_ID)
+#else
+      if (app.id == Services.appinfo.ID)
+#endif
+        minCompatVersion = XPIProvider.minCompatibleAppVersion;
+      else if (app.id == TOOLKIT_ID)
+        minCompatVersion = XPIProvider.minCompatiblePlatformVersion;
+@@ -6525,18 +6501,6 @@ AddonInternal.prototype = {
+      if (targetApp.id == TOOLKIT_ID)
+        app = targetApp;
+    }
+#ifdef MOZ_PHOENIX_EXTENSIONS
+    // Special case: check for Firefox TargetApps. this has to be done AFTER
+    // the initial check to make sure appinfo.ID is preferred, even if
+    // Firefox is listed before it in the install manifest.
+    // Only do this for extensions. Other types should not be allowed.
+    if (this.type == "extension") {
+      for (let targetApp of this.targetApplications) {
+        if (targetApp.id == FIREFOX_ID) //Firefox GUID
+          return targetApp;
+      }
+    }
+#endif
+    // Return toolkit ID if toolkit.
+    return app;
+  },
+
+
++ 0
+- 3
+toolkit/mozapps/extensions/internal/XPIProviderUtils.js
+View File
+@@ -71,9 +71,6 @@ const PROP_JSON_FIELDS = ["id", "syncGUID", "location", "version", "type",
+                          "softDisabled", "foreignInstall", "hasBinaryComponents",
+                          "strictCompatibility", "locales", "targetApplications",
+                          "targetPlatforms", "multiprocessCompatible",
+#ifdef MOZ_PHOENIX_EXTENSIONS
+                          "native"
+#endif
+                          ];
+
+// Time to wait before async save of XPI JSON database, in milliseconds
+
+
++ 0
+- 4
+toolkit/mozapps/extensions/internal/moz.build
+View File
+@@ -28,7 +28,3 @@ DEFINES['MOZ_EXTENSIONS_DB_SCHEMA'] = 16
+# Additional debugging info is exposed in debug builds
+if CONFIG['MOZ_EM_DEBUG']:
+    DEFINES['MOZ_EM_DEBUG'] = 1
+
+# Apperently this needs to be defined because it isn't picked up automagically any more
+if CONFIG['MOZ_PHOENIX_EXTENSIONS']:
+    DEFINES['MOZ_PHOENIX_EXTENSIONS'] = 1
