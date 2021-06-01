@@ -1,0 +1,16 @@
+-19,7 +19,7 @@ toolkit.jar:
+   skin/classic/global/inContentUI.css
+   skin/classic/global/listbox.css
+   skin/classic/global/menu.css
+   skin/classic/global/menulist.css
+*  skin/classic/global/menulist.css
+   skin/classic/global/netError.css
+*  skin/classic/global/notification.css
+   skin/classic/global/numberbox.css
+   menulist[editable="true"] > .menulist-dropmarker {
+  display: -moz-box;
+  -moz-appearance: menulist-button;
+%if MOZ_WIDGET_GTK == 3
+  min-width: 2.5em;
+  min-height: 2.25em;
+%endif  
