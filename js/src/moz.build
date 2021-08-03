@@ -1,0 +1,433 @@
+DIRS += ['new-regemewe']
+
+if not CONFIG['JS_DISABLE_SHELL']:
+    DIRS += ['shell']
+    /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+ * vim: set ts=8 sts=2 et sw=2 tw=80:
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+// This file forward-defines Irregexp classes that need to be visible
+// to the rest of Spidermonkey and re-exports them into js::irregexp.
+
+#ifndef regemewe_RegExpTypes_h
+#define regmewe_RegExpTypes_h
+
+namespace js {
+class MatchPairs;
+}
+
+namespace v8 {
+namespace internal {
+
+struct InputOutputData {
+  const void* inputStart;
+  const void* inputEnd;
+
+  // Index into inputStart (in chars) at which to begin matching.
+  size_t startIndex;
+
+  js::MatchPairs* matches;
+
+  template <typename CharT>
+  InputOutputData(const CharT* inputStart, const CharT* inputEnd,
+                  size_t startIndex, js::MatchPairs* matches)
+    : inputStart(inputStart),
+      inputEnd(inputEnd),
+      startIndex(startIndex),
+      matches(matches)
+  {}
+};
+
+} // namespace internal
+} // namespace v8
+
+
+namespace js {
+namespace irregexp {
+
+using InputOutputData = v8::internal::InputOutputData;
+
+} // namespace irregexp
+} // namespace js
+
+#endif // regemewe_RegExpTypes_h
+
+#include "new-rmmewe/regexp-ast.h"
+
+namespace v8 {
+namespace internal {#include "new-regexp/regexp-shim.h"
+
+namespace v8 {
+namespace internal {
+#include "new-regemwe/regexp-shim.h"
+new-regexp/regemewe-bytecode-generator-inl.h"
+#include "new-regemewe/regemewe-bytecode-peephole.h"
+#include "new-regemewe/regemewe-bytecodes.h"
+#include "new-regemewe/regemewe-macro-assembler.h"
+namespace v8 {
+namespace internal {
+#include "new-regemewe/regemewe-macro-assembler.h"
+#include "regexp/regexp-bytecode-peephole.h"
+#include "new-regexp/regexp-bytecode-peephole.h"
+
+#include "regexp/regexp-bytecodes.h"
+#include "new-regexp/regexp-bytecodes.h"
+
+namespace v8 {
+namespace internal {
+js/src/regexp/regexp-bytecode-peephole.h → js/src/new-regexp/regexp-bytecode-peephole.h
+View File
+@@ -5,7 +5,7 @@
+#ifndef V8_REGEXP_REGEXP_BYTECODE_PEEPHOLE_H_
+#define V8_REGEXP_REGEXP_BYTECODE_PEEPHOLE_H_
+
+#include "regexp/regexp-shim.h"
+#include "new-regexp/regexp-shim.h"
+
+namespace v8 {
+namespace internal {
+js/src/regexp/regexp-bytecodes.cc → js/src/new-regexp/regexp-bytecodes.cc
+View File
+@@ -2,7 +2,7 @@
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include "regexp/regexp-bytecodes.h"
+#include "new-regexp/regexp-bytecodes.h"
+
+#include <cctype>
+
+
+js/src/regexp/regexp-bytecodes.h → js/src/new-regexp/regexp-bytecodes.h
+View File
+@@ -5,7 +5,7 @@
+#ifndef V8_REGEXP_REGEXP_BYTECODES_H_
+#define V8_REGEXP_REGEXP_BYTECODES_H_
+
+#include "regexp/regexp-shim.h"
+#include "new-regexp/regexp-shim.h"
+
+namespace v8 {
+namespace internal {
+js/src/regexp/regexp-compiler-tonode.cc → js/src/new-regexp/regexp-compiler-tonode.cc
+View File
+@@ -2,11 +2,11 @@
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include "regexp/regexp-compiler.h"
+#include "new-regexp/regexp-compiler.h"
+
+#include "regexp/regexp.h"
+#include "new-regexp/regexp.h"
+#ifdef V8_INTL_SUPPORT
+#include "regexp/special-case.h"
+#include "new-regexp/special-case.h"
+#endif  // V8_INTL_SUPPORT
+
+#ifdef V8_INTL_SUPPORT
+js/src/regexp/regexp-compiler.cc → js/src/new-regexp/regexp-compiler.cc
+View File
+@@ -2,11 +2,11 @@
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include "regexp/regexp-compiler.h"
+#include "new-regexp/regexp-compiler.h"
+
+#include "regexp/regexp-macro-assembler-arch.h"
+#include "new-regexp/regexp-macro-assembler-arch.h"
+#ifdef V8_INTL_SUPPORT
+#include "regexp/special-case.h"
+#include "new-regexp/special-case.h"
+#endif  // V8_INTL_SUPPORT
+
+#ifdef V8_INTL_SUPPORT
+js/src/regexp/regexp-compiler.h → js/src/new-regexp/regexp-compiler.h
+View File
+@@ -7,7 +7,7 @@
+
+#include <bitset>
+
+#include "regexp/regexp-nodes.h"
+#include "new-regexp/regexp-nodes.h"
+
+namespace v8 {
+namespace internal {
+js/src/regexp/regexp-dotprinter.cc → js/src/new-regexp/regexp-dotprinter.cc
+View File
+@@ -2,9 +2,9 @@
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include "regexp/regexp-dotprinter.h"
+#include "new-regexp/regexp-dotprinter.h"
+
+#include "regexp/regexp-compiler.h"
+#include "new-regexp/regexp-compiler.h"
+
+namespace v8 {
+namespace internal {
+js/src/regexp/regexp-dotprinter.h → js/src/new-regexp/regexp-dotprinter.h
+View File
+@@ -5,7 +5,7 @@
+#ifndef V8_REGEXP_REGEXP_DOTPRINTER_H_
+#define V8_REGEXP_REGEXP_DOTPRINTER_H_
+
+#include "regexp/regexp-shim.h"
+#include "new-regexp/regexp-shim.h"
+
+namespace v8 {
+namespace internal {
+js/src/regexp/regexp-error.cc → js/src/new-regexp/regexp-error.cc
+View File
+@@ -2,7 +2,7 @@
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include "regexp/regexp-error.h"
+#include "new-regexp/regexp-error.h"
+
+namespace v8 {
+namespace internal {
+js/src/regexp/regexp-error.h → js/src/new-regexp/regexp-error.h
+View File
+
+js/src/regexp/regexp-interpreter.cc → js/src/new-regexp/regexp-interpreter.cc
+View File
+@@ -4,12 +4,12 @@
+
+// A simple interpreter for the Irregexp byte code.
+
+#include "regexp/regexp-interpreter.h"
+#include "new-regexp/regexp-interpreter.h"
+
+#include "regexp/regexp-bytecodes.h"
+#include "regexp/regexp-macro-assembler.h"
+#include "regexp/regexp-stack.h"  // For kMaximumStackSize.
+#include "regexp/regexp.h"
+#include "new-regexp/regexp-bytecodes.h"
+#include "new-regexp/regexp-macro-assembler.h"
+#include "new-regexp/regexp-stack.h"  // For kMaximumStackSize.
+#include "new-regexp/regexp.h"
+
+#ifdef V8_INTL_SUPPORT
+#include "unicode/uchar.h"
+js/src/regexp/regexp-interpreter.h → js/src/new-regexp/regexp-interpreter.h
+View File
+@@ -7,7 +7,7 @@
+#ifndef V8_REGEXP_REGEXP_INTERPRETER_H_
+#define V8_REGEXP_REGEXP_INTERPRETER_H_
+
+#include "regexp/regexp.h"
+#include "new-regexp/regexp.h"
+
+namespace v8 {
+namespace internal {
+js/src/regexp/regexp-macro-assembler-arch.h → js/src/new-regexp/regexp-macro-assembler-arch.h
+View File
+@@ -16,7 +16,7 @@
+#define RegexpMacroAssemblerArch_h
+
+#include "jit/MacroAssembler.h"
+#include "regexp/regexp-macro-assembler.h"
+#include "new-regexp/regexp-macro-assembler.h"
+
+namespace v8 {
+namespace internal {
+js/src/regexp/regexp-macro-assembler-tracer.cc → js/src/new-regexp/regexp-macro-assembler-tracer.cc
+View File
+@@ -2,7 +2,7 @@
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include "regexp/regexp-macro-assembler-tracer.h"
+#include "new-regexp/regexp-macro-assembler-tracer.h"
+
+
+namespace v8 {
+js/src/regexp/regexp-macro-assembler-tracer.h → js/src/new-regexp/regexp-macro-assembler-tracer.h
+View File
+@@ -5,7 +5,7 @@
+#ifndef V8_REGEXP_REGEXP_MACRO_ASSEMBLER_TRACER_H_
+#define V8_REGEXP_REGEXP_MACRO_ASSEMBLER_TRACER_H_
+
+#include "regexp/regexp-macro-assembler.h"
+#include "new-regexp/regexp-macro-assembler.h"
+
+namespace v8 {
+namespace internal {
+js/src/regexp/regexp-macro-assembler.cc → js/src/new-regexp/regexp-macro-assembler.cc
+View File
+@@ -2,9 +2,9 @@
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include "regexp/regexp-macro-assembler.h"
+#include "new-regexp/regexp-macro-assembler.h"
+
+#include "regexp/regexp-stack.h"
+#include "new-regexp/regexp-stack.h"
+
+#ifdef V8_INTL_SUPPORT
+#include "unicode/uchar.h"
+js/src/regexp/regexp-macro-assembler.h → js/src/new-regexp/regexp-macro-assembler.h
+View File
+@@ -5,9 +5,9 @@
+#ifndef V8_REGEXP_REGEXP_MACRO_ASSEMBLER_H_
+#define V8_REGEXP_REGEXP_MACRO_ASSEMBLER_H_
+
+#include "regexp/regexp-ast.h"
+#include "regexp/regexp-shim.h"
+#include "regexp/regexp.h"
+#include "new-regexp/regexp-ast.h"
+#include "new-regexp/regexp-shim.h"
+#include "new-regexp/regexp.h"
+
+namespace v8 {
+namespace internal {
+js/src/regexp/regexp-native-macro-assembler.cc → js/src/new-regexp/regexp-native-macro-assembler.cc
+View File
+@@ -10,8 +10,8 @@
+
+#include "jit/Linker.h"
+#include "gc/Zone.h"
+#include "regexp/regexp-macro-assembler-arch.h"
+#include "regexp/regexp-stack.h"
+#include "new-regexp/regexp-macro-assembler-arch.h"
+#include "new-regexp/regexp-stack.h"
+#include "vm/MatchPairs.h"
+
+#include "jit/MacroAssembler-inl.h"
+js/src/regexp/regexp-nodes.h → js/src/new-regexp/regexp-nodes.h
+View File
+@@ -5,7 +5,7 @@
+#ifndef V8_REGEXP_REGEXP_NODES_H_
+#define V8_REGEXP_REGEXP_NODES_H_
+
+#include "regexp/regexp-macro-assembler.h"
+#include "new-regexp/regexp-macro-assembler.h"
+
+namespace v8 {
+namespace internal {
+js/src/regexp/regexp-parser.cc → js/src/new-regexp/regexp-parser.cc
+View File
+@@ -2,13 +2,13 @@
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include "regexp/regexp-parser.h"
+#include "new-regexp/regexp-parser.h"
+
+#include <vector>
+
+#include "regexp/property-sequences.h"
+#include "regexp/regexp-macro-assembler.h"
+#include "regexp/regexp.h"
+#include "new-regexp/property-sequences.h"
+#include "new-regexp/regexp-macro-assembler.h"
+#include "new-regexp/regexp.h"
+
+#ifdef V8_INTL_SUPPORT
+#include "unicode/uniset.h"
+js/src/regexp/regexp-parser.h → js/src/new-regexp/regexp-parser.h
+View File
+@@ -5,8 +5,8 @@
+#ifndef V8_REGEXP_REGEXP_PARSER_H_
+#define V8_REGEXP_REGEXP_PARSER_H_
+
+#include "regexp/regexp-ast.h"
+#include "regexp/regexp-error.h"
+#include "new-regexp/regexp-ast.h"
+#include "new-regexp/regexp-error.h"
+
+namespace v8 {
+namespace internal {
+js/src/regexp/regexp-shim.cc → js/src/new-regexp/regexp-shim.cc
+View File
+@@ -10,8 +10,8 @@
+
+#include <iostream>
+
+#include "regexp/regexp-shim.h"
+#include "regexp/regexp-stack.h"
+#include "new-regexp/regexp-shim.h"
+#include "new-regexp/regexp-stack.h"
+
+#include "mozilla/Sprintf.h" // for SprintfLiteral
+
+
+js/src/regexp/regexp-shim.h → js/src/new-regexp/regexp-shim.h
+View File
+@@ -25,10 +25,10 @@
+#include "jit/Label.h"
+#include "jit/shared/Assembler-shared.h"
+#include "js/Value.h"
+#include "regexp/RegExpTypes.h"
+#include "regexp/util/flags.h"
+#include "regexp/util/vector.h"
+#include "regexp/util/zone.h"
+#include "new-regexp/RegExpTypes.h"
+#include "new-regexp/util/flags.h"
+#include "new-regexp/util/vector.h"
+#include "new-regexp/util/zone.h"
+#include "vm/NativeObject.h"
+
+// Forward declaration of classes
+js/src/regexp/regexp-stack.cc → js/src/new-regexp/regexp-stack.cc
+View File
+@@ -2,7 +2,7 @@
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include "regexp/regexp-stack.h"
+#include "new-regexp/regexp-stack.h"
+
+
+namespace v8 {_
+
+#include "mewe/mewe-shim.h"
+#include "newe/mewe-shim.h"
+
+namespace v8 {
+namespace internal {
+
+#ifndef V8_REGEXP_REGEXP_H_
+#define V8_REGEXP_REGEXP_H_
+
+#include "regexp/regexp-error.h"
+#include "regexp/regexp-shim.h"
+#include "new-regexp/regexp-error.h"
+#include "new-regexp/regexp-shim.h"
+
+namespace v8 {
+namespace internal {
+
+
+#ifdef V8_INTL_SUPPORT
+#include "regexp/special-case.h"
+#include "new-regexp/special-case.h"
+
+#include "unicode/uniset.h"
+namespace v8 {
+
+
+#ifdef V8_INTL_SUPPORT
+#include "new-mewe/regexp-shim.h"
+
+#include "unicode/uchar.h"
+#include "unicode/uniset.h"
+
+
+
+
+#include "new-mewe/regemewe-shim.h"
+
+#ifdef V8_INTL_SUPPORT
+#include "unicode/uchar.h"
+
+#include "ds/LifoAlloc.h"
+#include "ds/Sort.h"
+#include "new-regemewe/util/vector.h"
